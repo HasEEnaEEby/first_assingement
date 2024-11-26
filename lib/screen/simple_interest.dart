@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
 
-class SimpleInterest extends StatelessWidget {
+class SimpleInterest extends StatefulWidget {
+  @override
+  _SimpleInterestState createState() => _SimpleInterestState();
+}
+
+class _SimpleInterestState extends State<SimpleInterest> {
   final TextEditingController principalController = TextEditingController();
   final TextEditingController rateController = TextEditingController();
   final TextEditingController timeController = TextEditingController();
   String result = "";
 
+  void calculateSimpleInterest() {
+    double principal = double.tryParse(principalController.text) ?? 0.0;
+    double rate = double.tryParse(rateController.text) ?? 0.0;
+    double time = double.tryParse(timeController.text) ?? 0.0;
+
+    double simpleInterest = (principal * rate * time) / 100;
+    setState(() {
+      result = "Simple Interest: \$${simpleInterest.toStringAsFixed(2)}";
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,17 +49,14 @@ class SimpleInterest extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                double principal = double.parse(principalController.text);
-                double rate = double.parse(rateController.text);
-                double time = double.parse(timeController.text);
-                double simpleInterest = (principal * rate * time) / 100;
-                result = "Simple Interest: \$${simpleInterest.toStringAsFixed(2)}";
-              },
-              child:const Text('Calculate Simple Interest'),
+              onPressed: calculateSimpleInterest,
+              child: const Text('Calculate Simple Interest'),
             ),
             const SizedBox(height: 20),
-            Text(result),
+            Text(
+              result,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ),
