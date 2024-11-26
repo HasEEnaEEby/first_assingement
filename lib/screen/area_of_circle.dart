@@ -1,15 +1,32 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-class AreaOfCircle extends StatelessWidget {
+class AreaOfCircle extends StatefulWidget {
+  const AreaOfCircle({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _AreaOfCircleState createState() => _AreaOfCircleState();
+}
+
+class _AreaOfCircleState extends State<AreaOfCircle> {
   final TextEditingController radiusController = TextEditingController();
   String result = "";
+
+  void calculateArea() {
+    double radius = double.tryParse(radiusController.text) ?? 0.0;
+    double area = pi * radius * radius;
+
+    setState(() {
+      result = "Area: ${area.toStringAsFixed(2)} square units";
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Area of Circle'),
+        title: const Text('Area of Circle'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -17,20 +34,19 @@ class AreaOfCircle extends StatelessWidget {
           children: <Widget>[
             TextField(
               controller: radiusController,
-              decoration: InputDecoration(labelText: 'Radius'),
+              decoration: const InputDecoration(labelText: 'Radius'),
               keyboardType: TextInputType.number,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                double radius = double.parse(radiusController.text);
-                double area = pi * radius * radius;
-                result = "Area: ${area.toStringAsFixed(2)} square units";
-              },
-              child: Text('Calculate Area of Circle'),
+              onPressed: calculateArea,
+              child: const Text('Calculate Area'),
             ),
-            SizedBox(height: 20),
-            Text(result),
+            const SizedBox(height: 20),
+            Text(
+              result,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ),
