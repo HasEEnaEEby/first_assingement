@@ -5,21 +5,28 @@ class AreaOfCircle extends StatefulWidget {
   const AreaOfCircle({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _AreaOfCircleState createState() => _AreaOfCircleState();
 }
 
 class _AreaOfCircleState extends State<AreaOfCircle> {
   final TextEditingController radiusController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String result = "";
 
   void calculateArea() {
-    double radius = double.tryParse(radiusController.text) ?? 0.0;
-    double area = pi * radius * radius;
+    if (_formKey.currentState?.validate() ?? false) {
+      // Proceed only if validation passes
+      double radius = double.parse(radiusController.text.trim());
+      double area = pi * radius * radius;
 
-    setState(() {
-      result = "Area: ${area.toStringAsFixed(2)} square units";
-    });
+      setState(() {
+        result = "Area: ${area.toStringAsFixed(2)} square units";
+      });
+    } else {
+      setState(() {
+        result = ""; // Clear result if validation fails
+      });
+    }
   }
 
   @override
@@ -30,24 +37,40 @@ class _AreaOfCircleState extends State<AreaOfCircle> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            TextField(
-              controller: radiusController,
-              decoration: const InputDecoration(labelText: 'Radius'),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: calculateArea,
-              child: const Text('Calculate Area'),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              result,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+                controller: radiusController,
+                decoration: const InputDecoration(
+                  labelText: 'Radius',
+                  hintText: 'Enter a number',
+                ),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter the number';
+                  }
+                  double? radius = double.tryParse(value.trim());
+                  if (radius == null || radius <= 0) {
+                    return 'Please enter a valid positive number';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: calculateArea,
+                child: const Text('Calculate Area'),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                result,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
       ),
     );
